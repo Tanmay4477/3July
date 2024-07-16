@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome User</title>
+</head>
+<body>
+    <h1>Welcome User</h1>
+    <div id="tokenValue"></div>
+    <br><br>
+    <div id="username"></div>
+    <div id="password"></div>
+
+    <button onClick="editInfo()">Edit Info</button>
+    <div id="form"></div>
+
+<script>
+    const token = JSON.parse(localStorage.getItem('token'));
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log(token);
+    console.log(user);
+
+    const tokenValue = document.getElementById("tokenValue");
+    tokenValue.textContent = `Your token value is "${token}"`;
+    
+    const username = document.getElementById("username");
+    username.textContent = `Your username is ${user.username}`;
+
+    const password = document.getElementById("password");
+    password.textContent = `Your password is ${user.password}`;
+
+    function editInfo() {
+        const form = document.getElementById("form");
+        form.innerHTML = `
+                    <div>Username: </div>
+                    <input type="text" id="user" placeholder="edit username">
+                    <div>Password: </div>
+                    <input type="text" id="pass" placeholder="edit password">
+                    <div>Email: </div>
+                    <input type="text" id="email" placeholder="edit email">
+                    <div>Phone: </div>
+                    <input type="text" id="phone" placeholder="edit phone number">
+
+                    <br>
+                    <button onclick="submitEdit()">Submit</button>
+        `
+    }
+        async function submitEdit() {
+            const editUser = document.getElementById("user").value;
+            const editPass = document.getElementById("pass").value;
+            const editEmail = document.getElementById("email").value;
+            const editPhone = document.getElementById("phone").value;
+
+            const response = await fetch(`/api/auth/edit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    oldUsername: user.username,
+                    username: editUser,
+                    password: editPass,
+                    email: editEmail,
+                    phone: editPhone
+                }),
+            });
+
+            const data = await response.json();
+            console.log(data);
+        }
+    
+</script>
+</body>
+</html>
